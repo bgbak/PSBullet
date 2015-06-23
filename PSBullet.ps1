@@ -21,7 +21,8 @@
         [string]$Subject,
 	
         [Parameter(Mandatory=$True)]
-        [string]$Message
+        [string]$Message,
+        [string]$Device
 
   )
 
@@ -35,16 +36,20 @@ Exit 1}
   
 
 
-    $cred = New-Object System.Management.Automation.PSCredential ($apikey,(get-Random -min 1 -max 10| ConvertTo-SecureString -AsPlainText -Force))
+    $headers = @{
+        Authorization = "Bearer $apikey"
+        }
+
     $body = @{
         type = "note"
         title = $Subject
         body = $Message
+        device_iden = $Device
         }
 
 
     write-verbose "Sending push"
-    $Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Credential $cred -Body $body
+    $Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Headers $headers -Body $body
     If ($Sendattempt.StatusCode -eq "200"){Write-Verbose "Push sent successfully"}
         else {Write-Warning "Something went wrong. Check `$attempt for info"
               $global:attempt = $Sendattempt  }
