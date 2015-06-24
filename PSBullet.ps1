@@ -78,7 +78,10 @@ Exit 1}
     $Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/devices -Method Get  -Credential $cred
     If ($Requestattempt.StatusCode -eq "200"){
     Write-Verbose "Got devices successfully"
-    $Requestattempt}
+    ($Devices = $Requestattempt.Content|Convertfrom-json).Devices
+    Write-Verbose "Request returned $($Devices.Count) devices"
+    #$Devices
+    }
         else {Write-Warning "Something went wrong. Check `$attempt for info"
               $global:attempt = $Requestattempt  }
     }
