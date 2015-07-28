@@ -23,14 +23,13 @@
    #>
   param
   (
-        [Parameter(Mandatory=$True)]
-        [string]$Subject,
-	
-        [Parameter(Mandatory=$True)]
-        [string]$Message,
-        [string]$Device,
-        [string]$Email
-
+        [Parameter(Mandatory=$false)][ValidateSet("Note", "File","Link")][string]$Type,
+        [Parameter(Mandatory=$false)][string]$Device,
+        [Parameter(Mandatory=$false)][string]$Email,
+        [Parameter(Mandatory=$true,Position=0)][string]$Subject,
+	    [Parameter(Mandatory=$true,Position=1)][string]$Message,
+        [Parameter(Mandatory=$false,ParameterSetName="Link")][string]$url
+        
   )
 
 begin {
@@ -40,19 +39,43 @@ try {
      }
 catch {Write-Output "Could not get apikey from config file. Exiting now."
 Exit 1}
-  
+  }
 
-
+process{
     $headers = @{Authorization = "Bearer $apikey"}
 
-    $body = @{
-        type = "note"
-        title = $Subject
-        body = $Message
-        device_iden = $Device
-        email = $Email
+    switch($Type){
+    "Note"{Write-Verbose "Sending a note" 
+        $body = @{
+            type = "note" 
+            title = $Subject 
+            body = $Message 
+            device_iden = $Device 
+            email = $Email
+            }
         }
-
+    "Link"{Write-Verbose "Sending a link" 
+        $body = @{
+            type = "link" 
+            title = $Subject 
+            url = $url
+            body = $Message 
+            device_iden = $Device 
+            email = $Email
+            }
+        }
+    "File"{Write-Verbose "Sending a file" 
+        $body = @{
+            type = "file" 
+            body = $Message 
+            device_iden = $Device 
+            email = $Email
+            file_name = $FileName
+            file_type = "application\doc"
+            file_url = "https://api.pusbhullet.com/file/file1234.file
+            }
+        }
+    }
 
     write-verbose "Sending push"
     $Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Headers $headers -Body $body
