@@ -25,6 +25,5 @@ function Get-PusbhulletApiKey{
 
 	catch {Write-Output "Could not get apikey from config file. Exiting now."
 	Return $Null
-	Exit 1
 		}
 }
