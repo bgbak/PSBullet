@@ -29,17 +29,16 @@
         [Parameter(Mandatory=$true,Position=0)][string]$Subject,
 	    [Parameter(Mandatory=$true,Position=1)][string]$Message,
         [Parameter(Mandatory=$false,ParameterSetName="Link")][string]$url
-        
-  )
+)
 
 begin {
-Write-Verbose "Fetching api key from file"
-try {
+	Write-Verbose "Fetching api key from file"
+	try {
     $apikey = get-content (Join-Path -Path $PSSCriptroot -ChildPath pushbullet.cfg)
      }
-catch {Write-Output "Could not get apikey from config file. Exiting now."
-Exit 1}
-  }
+	catch {Write-Output "Could not get apikey from config file. Exiting now."
+	Exit 1}
+	}
 
 process{
     $headers = @{Authorization = "Bearer $apikey"}
@@ -77,47 +76,12 @@ process{
         }
     }
 
-    write-verbose "Sending push"
+    Write-Verbose "Sending message""
     $Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Headers $headers -Body $body
     If ($Sendattempt.StatusCode -eq "200"){Write-Verbose "Push sent successfully"}
         else {Write-Warning "Something went wrong. Check `$attempt for info"
               $global:attempt = $Sendattempt  }
     }
 
-    }
+}
 
-function Get-PushBulletDevices {
-  <#
-  .SYNOPSIS
-    Get a list of devices asociated with your pushbullet account.
-    Enter your apikey in a file named pusbhullet.cfg, and place it in the same folder as this file.
-  .EXAMPLE
-    Get-PushBulletDevices
-  #>
-  param
-  (
-  )
-
-begin {
-Write-Verbose "Fetching api key from file"
-try {
-    $apikey = get-content (Join-Path -Path $PSSCriptroot -ChildPath pushbullet.cfg)
-     }
-catch {Write-Output "Could not get apikey from config file. Exiting now."
-Exit 1}
-  
-    $headers = @{Authorization = "Bearer $apikey"}
-    
-    write-verbose "Getting devices"
-    $Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/devices -Method Get  -Credential $cred
-    If ($Requestattempt.StatusCode -eq "200"){
-    Write-Verbose "Got devices successfully"
-    ($Devices = $Requestattempt.Content|Convertfrom-json).Devices
-    Write-Verbose "Request returned $($Devices.Count) devices"
-    #$Devices
-    }
-        else {Write-Warning "Something went wrong. Check `$attempt for info"
-              $global:attempt = $Requestattempt  }
-    }
-
-    }
