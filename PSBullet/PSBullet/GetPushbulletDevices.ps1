@@ -28,9 +28,9 @@ function Get-PushBulletDevices {
 		$Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/devices -Method Get  -Headers $headers
 		If ($Requestattempt.StatusCode -eq "200"){
 			Write-Verbose "Got devices successfully"
-			($Devices = $Requestattempt.Content|Convertfrom-json).Devices
+			$Devices = ($Requestattempt.Content|Convertfrom-json).Devices
 			Write-Verbose "Request returned $($Devices.Count) devices"
-			Return $Devices.devices
+			Return $Devices
 		}
 		else {
 			Write-Error -Message "Error: Something went wrong. Check `$attempt for info" -Category WriteError
@@ -38,4 +38,4 @@ function Get-PushBulletDevices {
 		}
 	}
 }
-Export-ModuleMember -Function Get-PushBulletDevices
+Export-ModuleMember -Function *
