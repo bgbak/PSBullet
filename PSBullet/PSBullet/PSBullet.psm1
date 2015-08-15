@@ -1,5 +1,2 @@
-# Import the individual files
-. (Join-Path $PSScriptRoot '.\GetApiKey.ps1')
-. (Join-Path $PSScriptRoot '.\GetPushbulletDevices.ps1')
-. (Join-Path $PSScriptRoot '.\SendPushbulletMessage.ps1')
-
+# Don't know what to do with this file yet.
+# All the functions are allready imported when loading the manifest.
