@@ -31,57 +31,60 @@
         [Parameter(Mandatory=$false,ParameterSetName="Link")][string]$url
 )
 
-begin {
-	Write-Verbose "Fetching api key from file"
-	try {
-    $apikey = get-content (Join-Path -Path $PSSCriptroot -ChildPath pushbullet.cfg)
-     }
-	catch {Write-Output "Could not get apikey from config file. Exiting now."
-	Exit 1}
+	begin {
+		# Get the apikey
+		$apikey = Get-PusbhulletApiKey
+		Write-Verbose "Successfully got apikey"
+		if($apikey -eq $null){
+			Write-Error -Message "Could not read api key" -Category ReadError
+		}
+		else{
+			# Set the apikey in the headers.
+			$headers = @{Authorization = "Bearer $apikey"}
+		}
 	}
 
-process{
-    $headers = @{Authorization = "Bearer $apikey"}
+	process{
+			switch ($Type)
+			{
+				"Note"{Write-Verbose "Sending a note" 
+					$body = @{
+						type = "note" 
+						title = $Subject 
+						body = $Message 
+						device_iden = $Device 
+						email = $Email
+						}
+					}
+				"Link"{Write-Verbose "Sending a link" 
+					$body = @{
+						type = "link" 
+						title = $Subject 
+						url = $url
+						body = $Message 
+						device_iden = $Device 
+						email = $Email
+						}
+					}
+				"File"{Write-Verbose "Sending a file" 
+					$body = @{
+						type = "file" 
+						body = $Message 
+						device_iden = $Device 
+						email = $Email
+						file_name = $FileName
+						file_type = "application\doc"
+						file_url = "https://api.pusbhullet.com/file/file1234.file"
+						}
+					}
+				}
 
-    switch($Type){
-    "Note"{Write-Verbose "Sending a note" 
-        $body = @{
-            type = "note" 
-            title = $Subject 
-            body = $Message 
-            device_iden = $Device 
-            email = $Email
-            }
-        }
-    "Link"{Write-Verbose "Sending a link" 
-        $body = @{
-            type = "link" 
-            title = $Subject 
-            url = $url
-            body = $Message 
-            device_iden = $Device 
-            email = $Email
-            }
-        }
-    "File"{Write-Verbose "Sending a file" 
-        $body = @{
-            type = "file" 
-            body = $Message 
-            device_iden = $Device 
-            email = $Email
-            file_name = $FileName
-            file_type = "application\doc"
-            file_url = "https://api.pusbhullet.com/file/file1234.file
-            }
-        }
-    }
 
-    Write-Verbose "Sending message""
-    $Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Headers $headers -Body $body
-    If ($Sendattempt.StatusCode -eq "200"){Write-Verbose "Push sent successfully"}
-        else {Write-Warning "Something went wrong. Check `$attempt for info"
-              $global:attempt = $Sendattempt  }
-    }
-
+			Write-Verbose "Sending message"
+			$Sendattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/pushes -Method Post  -Headers $headers -Body $body
+			If ($Sendattempt.StatusCode -eq "200"){Write-Verbose "Push sent successfully"}
+				else {Write-Warning "Something went wrong. Check `$attempt for info"
+					  $global:attempt = $Sendattempt  }
+			
+		}
 }
-
