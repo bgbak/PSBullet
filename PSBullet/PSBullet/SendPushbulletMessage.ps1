@@ -23,7 +23,7 @@
    #>
   param
   (
-        [Parameter(Mandatory=$false)][ValidateSet("Note", "File","Link")][string]$Type,
+        [Parameter(Mandatory=$false)][ValidateSet("Note", "File","Link")][string]$Type = "Note",
         [Parameter(Mandatory=$false)][string]$Device,
         [Parameter(Mandatory=$false)][string]$Email,
         [Parameter(Mandatory=$true,Position=0)][string]$Subject,
@@ -88,3 +88,4 @@
 			
 		}
 }
+Export-Modulemember *
