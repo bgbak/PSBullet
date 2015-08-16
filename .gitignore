@@ -1,2 +1,4 @@
 apikey.txt
 PSBullet.sln
+*.sln
+*.pssproj
