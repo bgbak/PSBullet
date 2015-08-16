@@ -26,6 +26,7 @@
         [Parameter(Mandatory=$false)][ValidateSet("Note", "File","Link")][string]$Type = "Note",
         [Parameter(Mandatory=$false)][string]$Device,
         [Parameter(Mandatory=$false)][string]$Email,
+		[Parameter(Mandatory=$false)][string]$ChannelTag,
         [Parameter(Mandatory=$true,Position=0)][string]$Subject,
 	    [Parameter(Mandatory=$true,Position=1)][string]$Message,
         [Parameter(Mandatory=$false,ParameterSetName="Link")][string]$url
@@ -54,6 +55,7 @@
 						body = $Message 
 						device_iden = $Device 
 						email = $Email
+						channel_tag = $ChannelTag
 						}
 					}
 				"Link"{Write-Verbose "Sending a link" 
@@ -64,6 +66,7 @@
 						body = $Message 
 						device_iden = $Device 
 						email = $Email
+						channel_tag = $ChannelTag
 						}
 					}
 				"File"{Write-Verbose "Sending a file" 
@@ -75,6 +78,7 @@
 						file_name = $FileName
 						file_type = "application\doc"
 						file_url = "https://api.pusbhullet.com/file/file1234.file"
+						channel_tag = $ChannelTag
 						}
 					}
 				}
