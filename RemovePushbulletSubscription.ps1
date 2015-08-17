@@ -28,12 +28,13 @@ function Remove-PushBulletSubscription {
 			$headers = @{Authorization = "Bearer $apikey"}
 		}
 		if(!$iden){
-			$iden = (Get-PushBulletSubscriptions | ? {$channel.tag -match $tag}).iden
+			$iden = (Get-PushBulletSubscriptions | ? {$_.tag -match $tag}).iden
 		}
 	}
 	
 	process{
 		$uri = "https://api.pushbullet.com/v2/subscriptions/" + $iden
+		Write-Debug $uri
 		$Requestattempt = Invoke-WebRequest -Uri $uri -Headers $headers -Method Delete
 		If ($Requestattempt.StatusCode -eq "200"){
 			Write-Verbose "Removed subscription successfully"
