@@ -70,14 +70,20 @@
 						}
 					}
 				"File"{Write-Verbose "Sending a file" 
+					#First we need to upload the file
+					file_name = $file_name
+					file_type = $file_type
+					$uploadrequest = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/upload-request -Method Post -Headers $headers -Body $upload_body
+					
+					#Then we can compose the body which the message is constructed of
 					$body = @{
 						type = "file" 
 						body = $Message 
 						device_iden = $Device 
 						email = $Email
-						file_name = $FileName
-						file_type = "application\doc"
-						file_url = "https://api.pusbhullet.com/file/file1234.file"
+						file_name = $file_name
+						file_type = $file_type
+						file_url = $file_url
 						channel_tag = $ChannelTag
 						}
 					}
