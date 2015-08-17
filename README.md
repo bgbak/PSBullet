@@ -7,7 +7,7 @@ Powershell module for interacting with the Pushbullet API
 3. Use Import-Module .\PSBullet.psd1 to import the module.
 
 ##Todo list:
-* Get info about your account
+* ~~Get info about your account~~
 * Update account preferences
 * Add new contacts
 * Remove contacts
