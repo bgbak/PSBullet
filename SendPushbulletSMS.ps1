@@ -44,7 +44,7 @@ function Send-PushbulletSMS {
 		write-verbose "Sending SMS"
 		$Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/ -Method post  -Headers $headers
 		If ($Requestattempt.StatusCode -eq "200"){
-			Write-Verbose "SMS sent successfully"
+			Write-Verbose = "SMS sent successfully"
 			Return $Requestattempt.Content|Convertfrom-json
 		}
 		else {
