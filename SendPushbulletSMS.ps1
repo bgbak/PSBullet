@@ -28,21 +28,23 @@ function Send-PushbulletSMS {
 	}
 
 	process{
-		
-		$body = @{
-						type = "push" 
-						$push = @{
-							type = 'messaging_extension_reply'
+		$push = @{
+			type = 'messaging_extension_reply'
 							package_name = 'com.pushbullet.android'
 							target_device_iden = $DeviceIden
 							conversation_iden = $Number
 							message = $Message 
-							}
-							
-						$push = $push | ConvertTo-Json
+		}
+		
+		$push = $push | ConvertTo-Json
+		
+		$body = @{
+						type = "push" 
+						push = $push
+		}
 		
 		write-verbose "Sending SMS"
-		$Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/ -Method post  -Headers $headers
+		$Requestattempt = Invoke-WebRequest -Uri https://api.pushbullet.com/v2/ephemerals -Method post  -Headers $headers
 		If ($Requestattempt.StatusCode -eq "200"){
 			Write-Verbose = "SMS sent successfully"
 			Return $Requestattempt.Content|Convertfrom-json
